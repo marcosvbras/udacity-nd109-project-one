@@ -1,3 +1,3 @@
-# [In Progress] Project 1: Explore bicycle sharing data on United States
+# [In Progress] Project 1: Explore Chicago Bikeshare Data
 
 This is an evaluative test for Udacity's Nanadegree: Artificial Intelligence Programming with Python.
