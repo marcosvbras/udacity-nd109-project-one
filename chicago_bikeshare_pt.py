@@ -4,6 +4,16 @@
 import csv
 import matplotlib.pyplot as plt
 
+# Column Indexes
+START_TIME_INDEX = 0
+END_TIME_INDEX = 1
+TRIP_DURATION_INDEX = 2
+START_STATION_INDEX = 3
+END_STATION_INDEX = 4
+USER_TYPE_INDEX = 5
+GENDER_INDEX = 6
+BIRTH_YEAR_INDEX = 7
+
 # Vamos ler os dados como uma lista
 print("Lendo o documento...")
 with open("chicago.csv", "r") as file_read:
@@ -42,7 +52,7 @@ input("Aperte Enter para continuar...")
 # TODO: Imprima o `gênero` das primeiras 20 linhas
 print("\nTAREFA 2: Imprimindo o gênero das primeiras 20 amostras")
 for sample in data_list[0:20]:
-    print(sample[6])
+    print(sample[GENDER_INDEX])
 
 # Ótimo! Nós podemos pegar as linhas(samples) iterando com um for, e as colunas(features) por índices.
 # Mas ainda é difícil pegar uma coluna em uma lista. Exemplo: Lista com todos os gêneros
@@ -57,7 +67,7 @@ def column_to_list(data, index):
 
 # Vamos checar com os gêneros se isso está funcionando (apenas para os primeiros 20)
 print("\nTAREFA 3: Imprimindo a lista de gêneros das primeiras 20 amostras")
-print(column_to_list(data_list, -2)[:20])
+print(column_to_list(data_list, GENDER_INDEX)[:20])
 
 # ------------ NÃO MUDE NENHUM CÓDIGO AQUI ------------
 assert type(column_to_list(data_list, -2)) is list, "TAREFA 3: Tipo incorreto retornado. Deveria ser uma lista."
@@ -69,9 +79,9 @@ input("Aperte Enter para continuar...")
 # Agora sabemos como acessar as features, vamos contar quantos Male (Masculinos) e Female (Femininos) o dataset tem
 # TAREFA 4
 # TODO: Conte cada gênero. Você não deveria usar uma função para isso.
-gender_list = column_to_list(data_list, -2)
-male = len(list(filter(lambda gender: gender == "Male", column_to_list(data_list, -2))))
-female = len(list(filter(lambda gender: gender == "Female", column_to_list(data_list, -2))))
+gender_list = column_to_list(data_list, GENDER_INDEX)
+male = len(list(filter(lambda gender: gender == "Male", gender_list)))
+female = len(list(filter(lambda gender: gender == "Female", gender_list)))
 
 # Verificando o resultado
 print("\nTAREFA 4: Imprimindo quantos masculinos e femininos nós encontramos")
@@ -87,8 +97,8 @@ input("Aperte Enter para continuar...")
 # TODO: Crie uma função para contar os gêneros. Retorne uma lista.
 # Isso deveria retornar uma lista com [count_male, count_female] (exemplo: [10, 15] significa 10 Masculinos, 15 Femininos)
 def count_gender(data_list):
-    male = len(list(filter(lambda gender: gender == "Male", column_to_list(data_list, -2))))
-    female = len(list(filter(lambda gender: gender == "Female", column_to_list(data_list, -2))))
+    male = len(list(filter(lambda gender: gender == "Male", column_to_list(data_list, GENDER_INDEX))))
+    female = len(list(filter(lambda gender: gender == "Female", column_to_list(data_list, GENDER_INDEX))))
     return [male, female]
 
 
@@ -135,7 +145,18 @@ input("Aperte Enter para continuar...")
 # TAREFA 7
 # TODO: Crie um gráfico similar para user_types. Tenha certeza que a legenda está correta.
 print("\nTAREFA 7: Verifique o gráfico!")
-
+user_type_list = column_to_list(data_list, USER_TYPE_INDEX)
+user_types = ["Subscriber", "Customer"]
+subscriber_count = len(list(filter(lambda user_type: user_type == "Subscriber", user_type_list)))
+customer_count = len(list(filter(lambda user_type: user_type == "Customer", user_type_list)))
+quantity = [subscriber_count, customer_count]
+y_pos = list(range(len(user_types)))
+plt.bar(y_pos, quantity)
+plt.ylabel('Quantidade')
+plt.xlabel('Tipo de Usuário')
+plt.xticks(y_pos, user_types)
+plt.title('Quantidade por Tipo de Usuário')
+plt.show(block=True)
 
 input("Aperte Enter para continuar...")
 # TAREFA 8
@@ -143,7 +164,8 @@ input("Aperte Enter para continuar...")
 male, female = count_gender(data_list)
 print("\nTAREFA 8: Por que a condição a seguir é Falsa?")
 print("male + female == len(data_list):", male + female == len(data_list))
-answer = "Escreva sua resposta aqui."
+answer = "Porque nem todos os usuários do sistema de compartilhamento de bicicletas preencheram o campo de gênero, " \
+         "sendo possivelmente um campo opcional."
 print("resposta:", answer)
 
 # ------------ NÃO MUDE NENHUM CÓDIGO AQUI ------------
@@ -155,11 +177,23 @@ input("Aperte Enter para continuar...")
 # TAREFA 9
 # TODO: Ache a duração de viagem Mínima, Máxima, Média, e Mediana.
 # Você não deve usar funções prontas para isso, como max() e min().
-trip_duration_list = column_to_list(data_list, 2)
-min_trip = 0.
-max_trip = 0.
-mean_trip = 0.
-median_trip = 0.
+trip_duration_list = column_to_list(data_list, TRIP_DURATION_INDEX)
+trip_duration_list = list(map(lambda i: int(i), trip_duration_list))
+count_trip_duration = len(trip_duration_list)
+trip_duration_list.sort()
+
+# Min
+min_trip = trip_duration_list[0]
+# Max
+max_trip = trip_duration_list[-1]
+# Mean
+mean_trip = sum(trip_duration_list) / count_trip_duration
+# Median
+if count_trip_duration % 2 == 0:
+    median_trip = trip_duration_list[count_trip_duration / 2] + \
+                  trip_duration_list[count_trip_duration / 2 + 1] / 2
+else:
+    median_trip = trip_duration_list[round(count_trip_duration / 2)]
 
 
 print("\nTAREFA 9: Imprimindo o mínimo, máximo, média, e mediana")
